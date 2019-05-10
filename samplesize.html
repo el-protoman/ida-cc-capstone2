@@ -1,0 +1,150 @@
+
+<!-- saved from url=(0103)https://s3.amazonaws.com/codecademy-content/courses/learn-hypothesis-testing/a_b_sample_size/index.html -->
+<html><div id="bm-2225254214"><div data-reactroot="" id="bm-2225254214"></div></div><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" href="./samplesize_files/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<style>
+	html, text {
+		background-color: #224055;
+		color: white;
+		font-family: 'Oxygen', sans-serif;
+		fill: white;
+	}
+	body {
+		background-color: #224055;
+		color: white;
+		font-family: 'Oxygen', sans-serif;
+		font-size: 16px;
+	}
+	table {
+		margin-top: 10px;
+	}
+	td {
+		padding: 5px;
+		font-size: 25px;
+	}
+	input {
+		color: #1c3646;
+		font-size: 25px;
+	}
+	.percentLabel{
+		margin-left: 3px;
+	}
+	.percentLabel{
+		margin-left: 3px;
+	}
+	.btn {
+		background-color: #939598;
+		border: 1px solid #162c38;
+	}
+	.btn:hover{
+		background-color: #aaaaaa;
+		border: 1px solid #162c38;
+	}
+	.btn.active {
+		background-color: #1c3646;
+		border: 1px solid #c0c0c0;
+	}
+	.btn.active:hover {
+		background-color: #1c3646;
+		border: 1px solid #c0c0c0;
+	}
+</style>
+</head>
+<body>
+<div class="container">
+<table>
+<tbody><tr>
+	<th></th>
+	<th class=""></th>
+</tr>
+<tr>
+	<td>
+	Baseline conversion rate:
+	</td>
+	<td>
+	<input type="number" value="3" step="1" min="0" max="100" id="conversion" onchange="update()"><span class="percentLabel">%</span>
+	</td>
+</tr>
+<tr><td>
+	Statistical significance:
+	</td>
+	<td>
+
+	<div class="btn-group" data-toggle="buttons">
+	  <label class="btn btn-primary">
+	    <input type="radio" name="significance" id="significance85" autocomplete="off" value="0.85" checked=""> 85%
+	  </label>
+	  <label class="btn btn-primary active">
+	    <input type="radio" name="significance" id="significance90" autocomplete="off" value="0.9"> 90%
+	  </label>
+	  <label class="btn btn-primary">
+	    <input type="radio" name="significance" id="significance95" autocomplete="off" value="0.95"> 95%
+	  </label>
+	</div>
+	</td>
+</tr>
+<tr><td>
+	Minimum detectable effect:
+	</td>
+	<td>
+	<input type="number" value="20" step="1" min="0" max="100" id="minimum_effect" onchange="update()"><span class="percentLabel">%</span>
+	</td>
+</tr>
+<tr>
+	<td>Sample size: </td>
+	<td><span id="numSamples">870</span></td>
+</tr>
+</tbody></table>
+</div>
+<script src="./samplesize_files/jquery-3.2.1.min.js.download" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+
+<script>
+
+
+function getSampleSize(minimum_detectable, significance, conversion_rate) {
+    let zscore = 1.96
+    if(significance == 0.85) {
+    	zscore = 1.44
+    }
+    else if(significance == 0.9){
+    	zscore = 1.64
+    }
+
+    let factor = 2*(1.28+zscore)**2
+
+    let numerator = Math.sqrt(conversion_rate * (1 - conversion_rate));
+    let denominator = Math.abs(conversion_rate * minimum_detectable);
+    let min_sample_size = factor * Math.pow(numerator/denominator, 2);
+
+    return parseFloat(min_sample_size.toPrecision(2));
+
+}
+
+function update() {
+	var minimum_detectable = parseFloat($("#minimum_effect").val())/100
+	var significance = parseFloat($('input[name=significance]:checked').val())
+	var conversion_rate = parseFloat($("#conversion").val())/100
+	num_samples = getSampleSize(minimum_detectable, significance, conversion_rate)
+	$("#numSamples").html(num_samples)
+}
+
+function setup() {
+	$("input[type=radio][name=significance]").change(function(){
+		$('input[name=significance]').each(function(){$(this).parent().removeClass("active")})
+		$('input[name=significance]:checked').parent().addClass("active")
+		update()
+	})
+	$("input").on("keyup", function(){
+		update()
+	})
+    $("input").on("click", function(){
+		update()
+	})
+}
+
+$(document).on("ready", setup())
+
+</script>
+
+
+</body></html>
